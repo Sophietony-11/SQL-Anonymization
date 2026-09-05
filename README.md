@@ -1,651 +1,177 @@
-# SQL-Anonymization
-# ICS 499 - SQL Data Anonymization
+SQL Data Anonymization
+Project Overview
 
-## 1. Project Overview
+For this assignment, I created a Python program that takes an SQL file and replaces personal information with fake information. The SQL file contains names, addresses, email addresses, and phone numbers. My program replaces those values with synthetic data generated using the Faker library. One of the important parts of this assignment was making sure that repeated information stays consistent. For example, if the same customer name appears in both the customers and orders tables, it should be replaced with the same fake name in both places.
 
-This project is a Python program that anonymizes sensitive information in a SQL file.
+The program creates a new file called anonymized.sql instead of changing the original SQL file.The main things the program does are:
+* Replaces names
+* Replaces addresses
+* Replaces email addresses
+* Replaces phone numbers
+* Keeps repeated values consistent
+* Keeps values consistent between tables
+* Leaves non-sensitive information alone
+* Creates a separate anonymized SQL file
 
-The program reads an SQL file containing fictional test data and replaces names, addresses, email addresses, and phone numbers with realistic synthetic values.
+Technologies Used
+I used Python for this project.
+The main external library I used was Faker. Faker generates realistic-looking fake information such as names, addresses, emails, and phone numbers. I also used Python’s built-in hashlib library. I used SHA-256 from hashlib to create a consistent seed for Faker.
 
-The program is designed to:
-
-* Anonymize names
-* Anonymize addresses
-* Anonymize email addresses
-* Anonymize phone numbers
-* Keep repeated values consistent
-* Keep values consistent across multiple SQL tables
-* Preserve the SQL structure
-* Preserve non-sensitive information
-* Generate a separate anonymized SQL file
-
-The input file is:
-
-```text
-original.sql
-```
-
-The generated output file is:
-
-```text
-anonymized.sql
-```
-
----
-
-# 2. Programming Language and Technologies
-
-The program was written in:
-
+The project uses:
 * Python 3
 * Faker
 * hashlib
 * SQL
+I chose Python because it made it fairly simple to read the SQL file, find the information that needed to be changed, and write the anonymized version to a new file.
 
-Python was selected because it provides simple file and string-processing capabilities and supports libraries such as Faker for generating realistic synthetic data.
+Faker
+Faker is the main external library used in my program. It can generate different types of fake information, including names, addresses, emails, and phone numbers.
+I used it because the assignment asks for realistic synthetic data. Using something like NAME001 or PHONE001 would work as a replacement, but it would not look like realistic test data.
+I installed Faker using the command: python -m pip install Faker
+The hashlib library does not need to be installed because it is already included with Python.
 
----
-
-# 3. External Libraries
-
-## Faker
-
-The main external library used is the **Faker** Python library.
-
-Faker generates realistic synthetic information such as:
-
-* Names
-* Addresses
-* Email addresses
-* Phone numbers
-
-Faker was selected because the assignment requires realistic synthetic data rather than simple placeholders such as `NAME001` or `ADDRESS001`.
-
-Faker is installed with:
-
-```text
-python -m pip install Faker
-```
-
-## hashlib
-
-The program also uses Python's built-in `hashlib` module.
-
-`hashlib` does not need to be installed separately because it is included with Python.
-
-The program uses SHA-256 hashing to create a deterministic seed from each original value.
-
-The hash itself is not placed into the anonymized SQL file. Instead, it is used to seed Faker so that the same original value can consistently generate the same synthetic value.
-
----
-
-# 4. Installation
-
-Python 3 must be installed.
-
-After Python is installed, open a terminal in the project folder and run:
-
-```text
-python -m pip install Faker
-```
-
-No additional external libraries are required.
-
----
-
-# 5. How to Run the Program
-
-The project should contain the following files:
-
-```text
+How to Run the Program
+The project folder should contain the following files:
 original.sql
 anonymizer.py
-```
-
-Open PowerShell or another terminal in the project directory and run:
-
-```text
-python anonymizer.py
-```
-
-The program will read `original.sql`, anonymize the sensitive values, and automatically create:
-
-```text
-anonymized.sql
-```
-
-The program also displays:
-
-```text
-Anonymized SQL file created successfully!
-```
-
-when the output file has been created.
-
----
-
-# 6. Expected Input
-
-The program expects an SQL file named:
-
-```text
-original.sql
-```
-
-The test file contains four tables:
-
-* `customers`
-* `orders`
-* `contacts`
-* `shipping`
-
-The SQL file contains names, addresses, email addresses, and phone numbers that are intentionally repeated across different tables.
-
-The program uses lists of the known names, addresses, emails, and phone numbers from the test SQL file to identify the values that need to be anonymized.
-
----
-
-# 7. Generated Output
-
-The program generates:
-
-```text
-anonymized.sql
-```
-
-The output contains the same general SQL structure as the original file, but the specified PII values have been replaced with synthetic values.
-
-For example, an original name such as:
-
-```text
-Daniel Carter
-```
-
-can be replaced with a synthetic name such as:
-
-```text
-Wendy Jones
-```
-
-If the same original name appears multiple times, the same synthetic name is used each time.
-
-The same approach is used for addresses, emails, and phone numbers.
-
----
-
-# 8. How the Program Works
-
-The program follows these steps.
-
-### Step 1: Create mapping dictionaries
-
-The program creates four dictionaries:
-
-```text
-name_mapping
-address_mapping
-email_mapping
-phone_mapping
-```
-
-These dictionaries store the relationship between an original value and its synthetic replacement.
-
-### Step 2: Read the SQL file
-
-The program opens `original.sql` using UTF-8 encoding and reads the contents into the variable `sql_content`.
-
-### Step 3: Identify sensitive values
-
-The program contains lists of the names, addresses, email addresses, and phone numbers that appear in the test SQL file.
-
-These lists tell the program which values should be anonymized.
-
-### Step 4: Create a deterministic seed
-
-For each original value, the program uses SHA-256 hashing:
-
-```text
-original value → SHA-256 hash → numeric seed
-```
-
-The seed is limited to a value that Faker can use.
-
-### Step 5: Generate synthetic data
-
-A Faker object is created and given the deterministic seed.
-
-Faker then generates a synthetic value.
-
-Different Faker methods are used for different types of information:
-
-* `fake.name()` for names
-* `fake.address()` for addresses
-* `fake.email()` for emails
-* `fake.numerify("###-###-####")` for phone numbers
-
-### Step 6: Store the replacement
-
-The generated synthetic value is saved in the appropriate mapping dictionary.
-
-For example:
-
-```text
-Daniel Carter → Wendy Jones
-```
-
-### Step 7: Replace the original value
-
-The program uses Python's string replacement function to replace the original value in the SQL content.
-
-### Step 8: Create the output file
-
-After all replacements are completed, the program writes the modified SQL content to:
-
-```text
-anonymized.sql
-```
-
----
-
-# 9. Anonymization Strategy
-
-The program uses **realistic synthetic data generation, deterministic seeding, and mapping dictionaries**.
-
-The goal is to replace PII while maintaining the relationships between repeated values.
-
-For each category of PII, a separate mapping dictionary is used.
-
-For example:
-
-```text
-name_mapping
-Daniel Carter → Wendy Jones
-```
-
-If `Daniel Carter` appears again, the program checks the dictionary first.
-
-If the original value is already present, the program returns the existing synthetic value instead of generating another one.
-
-This prevents the same original value from receiving multiple replacements during the program execution.
-
----
-
-# 10. How Consistency Is Maintained
-
-Consistency is maintained through the mapping dictionaries and deterministic seeding.
-
-For example, suppose the original SQL contains:
-
-```text
-Daniel Carter
-```
-
-The program generates:
-
-```text
-Wendy Jones
-```
-
-and stores:
-
-```text
-Daniel Carter → Wendy Jones
-```
-
-If `Daniel Carter` appears again, the program uses `Wendy Jones` again.
-
-The same process is used for:
-
-* Names
-* Addresses
-* Email addresses
-* Phone numbers
-
-This is especially important because the same customer's information appears in multiple tables.
-
----
-
-# 11. Consistency Across Tables
-
-The SQL file contains information that is repeated across:
-
-```text
-customers
-orders
-contacts
-shipping
-```
-
-For example, the same customer name, email, phone number, or address can appear in more than one table.
-
-Because the program uses the same mappings throughout the SQL file, repeated original values are replaced consistently.
-
-For example:
-
-```text
-customers:
-Wendy Jones
-rramos@example.org
-
-orders:
-Wendy Jones
-rramos@example.org
-
-contacts:
-Wendy Jones
-rramos@example.org
-
-shipping:
-Wendy Jones
-```
-
-The original relationships are therefore preserved while the original PII is removed.
-
----
-
-# 12. Synthetic Data Generation
-
-The program uses Faker to generate realistic synthetic data.
-
-Instead of replacing information with generic placeholders such as:
-
-```text
-NAME001
-ADDRESS001
-EMAIL001
-PHONE001
-```
-
-the program generates values that resemble realistic data.
-
-For example:
-
-```text
-Wendy Jones
-2449 Gamble Lake Suite 991, Lake Kimberly, CA 79132
-rramos@example.org
-634-520-7615
-```
-
-The synthetic values are generated for testing purposes and are not intended to represent the original individuals.
-
----
-
-# 13. Research Component
-
-Several data anonymization concepts were considered before selecting the implementation approach.
-
-## Data Masking
-
-Data masking hides or changes part of sensitive information while often leaving some of the original value visible.
-
-For example:
-
-```text
-612-555-1101
-```
-
-could be displayed as:
-
-```text
-612-XXX-XXXX
-```
-
-Masking was not selected because the assignment requires realistic synthetic replacement values rather than partially hidden values.
-
-## Anonymization
-
-Anonymization transforms or removes identifying information so that the original individuals cannot be identified from the resulting data.
-
-This is the main goal of this project.
-
-Names, addresses, email addresses, and phone numbers are replaced with synthetic values.
-
-## Pseudonymization
-
-Pseudonymization replaces identifying information with another value while maintaining a way to associate the replacement with the original value.
-
-The mapping dictionaries in this project have some characteristics of pseudonymization because they create relationships between original values and replacement values during processing.
-
-However, the final SQL output contains synthetic values rather than the original PII.
-
-## Synthetic Data
-
-Synthetic data is artificially generated data that resembles realistic data but is not directly copied from the original dataset.
-
-Synthetic data is appropriate for this assignment because the resulting SQL should remain realistic and useful for testing.
-
-Faker is used to generate the synthetic data.
-
-## Hashing
-
-Hashing converts an input into a fixed-length value.
-
-This project uses SHA-256 hashing to create deterministic seeds for Faker.
-
-The hash is not used as the visible replacement value.
-
-Instead:
-
-```text
-Original value
-      ↓
-SHA-256
-      ↓
-Deterministic seed
-      ↓
-Faker
-      ↓
-Synthetic value
-```
-
-## Tokenization
-
-Tokenization replaces sensitive information with a token or placeholder.
-
-For example:
-
-```text
-Daniel Carter
-```
-
-could become:
-
-```text
-TOKEN_001
-```
-
-Tokenization was not selected because the assignment requires realistic synthetic data. A token would not look like a realistic name, address, email, or phone number.
-
----
-
-# 14. Why This Approach Was Selected
-
-This approach was selected because it satisfies the main requirements of the assignment.
-
-### Realistic values
-
-Faker generates realistic-looking names, addresses, emails, and phone numbers.
-
-### Consistency
-
-Mapping dictionaries allow repeated values to use the same synthetic replacement.
-
-### Deterministic generation
-
-SHA-256 hashing is used to create a deterministic seed from the original value.
-
-### Preservation of SQL
-
-The program modifies the SQL as text instead of rebuilding the SQL statements. This helps preserve the original SQL structure.
-
-### Simple implementation
-
-The approach is straightforward to understand, implement, and test.
-
-The assignment states that performance is not the main concern, so the program prioritizes correctness and consistency.
-
----
-
-# 15. Handling Apostrophes
-
-The test SQL file contains a name with an apostrophe represented using SQL escaping.
-
-The program includes the SQL-formatted value in its list of names:
-
-```text
-Robert O''Connor
-```
-The replacement is performed on the complete string, allowing the SQL structure around the value to remain intact.
-This was included because the assignment specifically requires testing the handling of apostrophes and special characters.
-
----
-
-# 16. Preserving SQL Structure
-The program reads the entire SQL file as text and performs targeted replacements.It does not intentionally modify SQL commands or non-sensitive values.
-
-The following are preserved:
-
-* `DROP TABLE` statements
-* `CREATE TABLE` statements
-* `INSERT` statements
-* `UPDATE` statements
-* `DELETE` statements
+Open PowerShell or another terminal in the project folder and run: python anonymizer.py
+The program reads original.sql, replaces the specified personal information, and creates anonymized.sql.
+If everything works, the program prints: Anonymized SQL file created successfully!
+
+Input and Output
+The input file for the program is original.sql.
+The SQL file contains four tables:
+* customers
+* orders
+* contacts
+* shipping
+Some of the same customer information appears in more than one table. This makes it possible to test whether the anonymized information stays consistent.
+The output file is anonymized.sql. The original SQL structure stays in place, but the names, addresses, emails, and phone numbers are replaced.
+For example, one of the original names, Daniel Carter, can become Wendy Jones.
+If Daniel Carter appears somewhere else in the SQL file, it will also become Wendy Jones.
+The same idea is used for addresses, emails, and phone numbers.
+
+How My Program Works
+The program starts by creating four dictionaries:
+* name_mapping
+* address_mapping
+* email_mapping
+* phone_mapping
+
+These dictionaries keep track of the original values and the fake values that were created for them.
+The program then reads the entire original.sql file.
+I have lists in the Python program containing the names, addresses, email addresses, and phone numbers from the test SQL file. These lists tell the program which values should be replaced.
+For each value, the program creates a SHA-256 hash of the original value. That hash is turned into a number and used as the seed for Faker.
+The basic process is: Original value → SHA-256 hash → Seed → Faker → Fake value
+Faker then generates the replacement.
+The program uses fake names for names, fake.address() for addresses, fake.email() for emails, and fake.numerify(“###-###-####”) for phone numbers. The generated value is saved in the appropriate dictionary. The program then uses Python’s replace function to replace the original value in the SQL text.
+After all of the replacements are finished, the modified SQL is written to anonymized.sql.
+
+Keeping the Data Consistent
+Consistency was one of the main things I needed to make sure worked correctly.
+For example, if the original SQL contains Daniel Carter, the program might generate Wendy Jones.
+The mapping is then saved as: Daniel Carter → Wendy Jones
+If Daniel Carter appears again, the program checks the mapping first and uses Wendy Jones instead of creating another fake name. The same idea is used for addresses, emails, and phone numbers.
+The SHA-256 seed also helps with consistency. Since the seed comes from the original value, the same original value can produce the same Faker result.
+
+Consistency Between Tables
+The SQL file was set up so that some information is repeated between tables. For example, information for the same customer can appear in customers, orders, contacts, and shipping. The program uses the same mappings while processing the whole SQL file. Because of this, the same original name, address, email, or phone number gets the same replacement wherever it appears.
+This is important because changing the information differently in each table could break the relationships between the records.
+
+Synthetic Data
+The replacement information is generated by Faker. It is not meant to represent the original people. Instead of using placeholders such as NAME001, ADDRESS001, EMAIL001, and PHONE001, the program creates values that look more like actual data.
+For example, it could generate a name such as Wendy Jones, an address such as 2449 Gamble Lake Suite 991, Lake Kimberly, CA 79132, an email such as rramos@example.org, and a phone number such as 634-520-7615.
+
+The purpose is to make the anonymized SQL file still useful for testing while removing the original personal information.
+One limitation is that the fake name and fake email are generated independently. The program does not specifically create an email from the fake person’s name. Both are still synthetic, but they do not necessarily match each other.
+
+Anonymization Concepts I Looked At
+Before choosing my approach, I looked at several common ways of handling sensitive data.
+
+Data Masking
+Data masking hides part of the original information. For example, a phone number such as 612-555-1101 could be displayed as 612-XXX-XXXX. I did not use masking because the assignment calls for realistic replacement data, not just partially hidden data.
+
+Anonymization
+Anonymization is the process of changing or removing identifying information so that the original person cannot be identified from the resulting data.
+This is the main goal of my project. I replace names, addresses, email addresses, and phone numbers with synthetic values.
+
+Pseudonymization
+Pseudonymization replaces identifying information with another value while keeping some way of connecting the replacement to the original value. My program has some similarities to this because it creates mappings between the original values and their replacements while it is running. However, the final SQL file contains the synthetic values instead of the original personal information.
+
+Synthetic Data
+Synthetic data is data that is artificially generated instead of being copied directly from the original data.
+This is what I used for the replacement values. Faker creates the new names, addresses, emails, and phone numbers.
+
+Hashing
+Hashing converts information into a fixed-length value. I use SHA-256 hashing in this project to create a deterministic seed for Faker. I am not putting the SHA-256 hash into the SQL file.
+The process is: Original value → SHA-256 → Seed → Faker → Synthetic value
+
+Tokenization
+Tokenization replaces sensitive information with a token. For example, Daniel Carter could become TOKEN_001.
+I did not use tokenization because the assignment asks for realistic synthetic data. A token such as TOKEN_001 would not look like an actual name or address.
+
+Why I Chose This Approach
+I chose this approach because it covers the main requirements of the assignment without making the program unnecessarily complicated. Faker gives me realistic-looking replacement data, while the mapping dictionaries make sure repeated values stay consistent.Using SHA-256 as the seed also makes the generated replacements deterministic. This means the same original value can produce the same synthetic value.I also chose to work with the SQL file as text instead of using a full SQL parser. For this assignment, the test data is known and performance is not the main concern. The simpler approach was easier to implement and test.
+
+Handling Apostrophes
+The SQL file includes a name containing an apostrophe: Robert O’'Connor. The two apostrophes are how the apostrophe is escaped inside an SQL string. I included the SQL-formatted version in the list of names that the program replaces. The program replaces the complete value instead of trying to change individual characters. This was useful for testing whether special characters in the data could be handled without changing the surrounding SQL.
+
+Preserving the SQL
+The program does not rebuild the SQL statements. It reads the original file as text and replaces only the values that are in the anonymization lists.
+Because of this, things such as the following are left alone:
+* SQL commands
 * Column names
 * Customer IDs
 * Order IDs
 * Dates
 * Product names
 * Quantities
-* Amounts
+* Prices
 * Loyalty levels
-* Boolean values
+* TRUE and FALSE
 * Contact types
-* Notes
-* Shipping carriers
+* Shipping companies
 * Tracking statuses
+* Other non-sensitive information
+The DROP TABLE, CREATE TABLE, INSERT, UPDATE, and DELETE statements are also left in place. The goal is for anonymized.sql to still have the same basic structure and relationships as the original file.
 
-The program also preserves the two different `INSERT` statement styles in the test file.
+Testing
+I tested the program using the SQL test file provided for the assignment.
+I checked that the original names were replaced with fake names.
+I checked that the original addresses were replaced with synthetic addresses.
+I checked that the original email addresses were replaced with fake email addresses.
+I checked that the original phone numbers were replaced and that the generated numbers followed a normal phone-number format.
+I also checked the generated anonymized.sql file to make sure the original names, addresses, emails, and phone numbers were no longer present.
+Repeated values were checked to make sure the same original value received the same replacement.
+I also checked information that appeared in more than one table to make sure the replacements stayed consistent.
+The SQL statements were checked to make sure they were still present after the replacements.
+Finally, I checked that information that did not need to be anonymized was not unnecessarily changed.
+For example, values such as Gold, Silver, Bronze, TRUE, FALSE, Wireless Keyboard, UPS, FedEx, USPS, Delivered, In Transit, and Processing remain unchanged.
+Testing Results
 
----
+Column 1	Column 2
+Test	Result
+Names replaced	PASS
+Addresses replaced	PASS
+Emails replaced	PASS
+Phone numbers replaced	PASS
+Original PII removed	PASS
+Repeated values stay consistent	PASS
+Values consistent across tables	PASS
+Synthetic data has reasonable formats	PASS
+SQL structure preserved	PASS
+Non-sensitive data preserved	PASS
+Apostrophe case tested	PASS
 
-# 17. Testing
-Testing was performed using the provided synthetic SQL test data. Correctness was prioritized over performance. The following tests were performed.
+Limitations
+There are a few limitations to my current program. First, the program uses predefined lists of the names, addresses, emails, and phone numbers from the assignment’s test file. It is not an automatic PII detection system. If a completely different SQL file were used, I would need to update those lists. Second, the fake names and emails are generated independently. The program does not make an email based on the generated fake name. Third, the program uses string replacement rather than a SQL parser. This works for the provided test file, but a larger or more complicated SQL file could require a more advanced approach. Finally, the mapping dictionaries only exist while the program is running. They are not saved to a separate file.
 
-### Names
-The original names were replaced with synthetic names. Repeated names were checked to make sure they received the same synthetic replacement.
-
-### Addresses
-The original addresses were replaced with synthetic addresses.Repeated addresses were checked for consistency.
-
-### Emails
-The original email addresses were replaced with synthetic email addresses. Repeated emails were checked to make sure the same replacement was used.
-
-### Phone Numbers
-The original phone numbers were replaced with synthetic phone numbers. The generated phone numbers were checked to make sure they followed a reasonable phone-number format.
-
-### Original PII
-The generated `anonymized.sql` file was checked to make sure the original names, addresses, email addresses, and phone numbers were removed.
-
-### Repeated Values
-Repeated values were checked within the SQL file to make sure the same original value received the same synthetic replacement.
-
-### Multiple Tables
-Values appearing in `customers`, `orders`, `contacts`, and `shipping` were checked for consistency.
-### Synthetic Formats
-The generated values were checked to make sure they had reasonable formats.
-Examples include:
-* Names that look like names
-* Addresses that look like addresses
-* Emails that follow an email format
-* Phone numbers that follow a phone-number format
-
-### SQL Structure
-The generated SQL file was checked to make sure the SQL statements remained intact.
-
-### Non-sensitive Values
-Non-sensitive values were checked to make sure they were not unnecessarily changed.
-Examples include:
-```text
-Gold
-Silver
-Bronze
-TRUE
-FALSE
-Wireless Keyboard
-UPS
-FedEx
-USPS
-Delivered
-In Transit
-Processing
-```
-
-These values remain unchanged.
-
----
-
-# 18. Testing Results
-
-| Requirement                              | Result |
-| ---------------------------------------- | ------ |
-| Names anonymized                         | PASS   |
-| Addresses anonymized                     | PASS   |
-| Emails anonymized                        | PASS   |
-| Phone numbers anonymized                 | PASS   |
-| Original PII removed                     | PASS   |
-| Repeated values consistent               | PASS   |
-| Consistency across tables                | PASS   |
-| Synthetic values have reasonable formats | PASS   |
-| SQL structure preserved                  | PASS   |
-| Non-sensitive values preserved           | PASS   |
-
----
-
-# 19. Known Limitations
-The program has several limitations.
-
-### Predefined PII lists
-The program currently identifies sensitive values using predefined lists of names, addresses, emails, and phone numbers from the assignment's test SQL file. Therefore, it is not a completely general-purpose SQL anonymization tool.
-A more advanced program could automatically detect PII based on column names, SQL schema information, or pattern matching.
-
-### Independent synthetic fields
-The fake names and fake email addresses are generated independently using Faker.
-The program does not create an email address specifically from the generated person's fake name.
-
-### Text replacement
-The program uses Python string replacement instead of a full SQL parser.
-This keeps the implementation simple but means that a more advanced solution could provide more precise field-level SQL processing.
-
-### Mapping storage
-The mappings are stored in memory while the program runs. They are not saved to a separate mapping file.
-The mapping is therefore intended for the anonymization process rather than for recovering the original data.
-
----
-
-# 20. Project Files
-
-The completed project contains:
-SQL-Anonymization/
-│
-├── anonymizer.py
-├── original.sql
-├── anonymized.sql
-└── README.md
-```
-
-### `anonymizer.py`
-The Python program that performs the anonymization.
-
-### `original.sql`
-The original synthetic SQL test file provided for the assignment.
-
-### `anonymized.sql`
-The SQL file generated by the Python program after replacing the specified PII.
-
-### `README.md`
-The project documentation explaining the technology, anonymization strategy, design decisions, installation, execution, and testing.
-
-# 21. Conclusion
-This project demonstrates a Python-based approach to SQL data anonymization using Faker, SHA-256 hashing, and mapping dictionaries. The program replaces names, addresses, email addresses, and phone numbers with realistic synthetic values while maintaining consistency when the same values appear multiple times or across different SQL tables. The approach was selected because it provides realistic synthetic data, consistent replacements, and preservation of the existing SQL structure. Testing focused on verifying that the original PII was removed, repeated values remained consistent, synthetic values had reasonable formats, SQL structure was preserved, and non-sensitive information was not unnecessarily modified.
-The final result is an `anonymized.sql` file that remains useful for testing while no longer exposing the original names, addresses, email addresses, or phone numbers.
+Project Files
+The project contains four main files:
+* anonymizer.py — The Python program that performs the anonymization.
+* original.sql — The original SQL test file.
+* anonymized.sql — The SQL file created by the Python program after replacing the specified personal information.
+* README.md — This documentation explaining the project, how it works, how to run it, and how it was tested.
+* 
+Conclusion
+For this assignment, I created a Python program that replaces names, addresses, email addresses, and phone numbers in an SQL file with synthetic data. I used Faker to generate the replacements and SHA-256 hashing to create consistent seeds. I also used mapping dictionaries so that repeated information gets the same replacement throughout the SQL file. The final anonymized.sql file keeps the original SQL structure and non-sensitive information while removing the original personal information. My testing also showed that repeated values stay consistent and that the generated information has reasonable formats. The main limitation is that the program currently works with the known PII values in the assignment’s test file rather than automatically finding every possible piece of PII in any SQL file.
