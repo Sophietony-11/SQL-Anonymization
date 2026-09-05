@@ -163,19 +163,31 @@ For example, values such as Gold, Silver, Bronze, TRUE, FALSE, Wireless Keyboard
 
 Testing Results
 
-Column 1	Column 2
+Column 1 |	Column 2
+
 Test	Result
-Names replaced	PASS
-Addresses replaced	PASS
-Emails replaced	PASS
-Phone numbers replaced	PASS
-Original PII removed	PASS
-Repeated values stay consistent	PASS
-Values consistent across tables	PASS
-Synthetic data has reasonable formats	PASS
-SQL structure preserved	PASS
-Non-sensitive data preserved	PASS
-Apostrophe case tested	PASS
+
+Names replaced | 	PASS
+
+Addresses replaced	| PASS
+
+Emails replaced	| PASS
+
+Phone numbers replaced |	PASS
+
+Original PII removed |	PASS
+
+Repeated values stay consistent | 	PASS
+
+Values consistent across tables |	PASS
+
+Synthetic data has reasonable formats	| PASS
+
+SQL structure preserved |	PASS
+
+Non-sensitive data preserved | PASS
+
+Apostrophe case tested | PASS
 
 
 Limitations
